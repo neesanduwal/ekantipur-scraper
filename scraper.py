@@ -7,7 +7,7 @@ def _first_url_from_srcset(srcset: str | None) -> str | None:
     """Parse srcset and return the first candidate URL (if any)."""
     if not srcset:
         return None
-    # Example: "https://a.jpg 1x, https://b.jpg 2x"
+    
     first = srcset.split(",")[0].strip()
     return first.split()[0].strip() if first else None
 
@@ -37,7 +37,7 @@ def _unwrap_thumb_php(maybe_thumb_url: str | None) -> str | None:
     src_vals = qs.get("src") or []
     if not src_vals:
         return u
-    # src is typically URL-encoded already.
+    
     return unquote(src_vals[0]) or u
 
 
@@ -56,16 +56,16 @@ def main():
         # Navigate to the ekantipur homepage
         page.goto("https://ekantipur.com", wait_until="domcontentloaded")
 
-        # Wait for the network to be mostly idle to ensure the page has loaded
-        # Adjust timeout or wait strategy later as needed for scraping
+        # Avoid "networkidle" on news sites (they often keep long-polling/analytics open).
+        # Instead, wait for a basic, stable DOM element that indicates the page is rendered.
         page.wait_for_load_state("load")
-        page.wait_for_selector("body")
+        page.locator("body").wait_for(state="visible", timeout=30_000)
 
         # --- Cartoon of the Day (homepage: व्यंग्यचित्र / कार्टुन) ---
         # Navigate to the dedicated cartoon page, which reliably represents
         # the current "Cartoon of the Day".
         page.goto("https://ekantipur.com/cartoon", wait_until="domcontentloaded")
-        page.wait_for_load_state("networkidle")
+        page.wait_for_load_state("load")
 
         # Wait for the main cartoon content to be visible (best-effort; don't crash if layout changes).
         hero_img = page.locator("main img, article img").first
@@ -119,7 +119,7 @@ def main():
         # --- Entertainment section (top 5 articles) ---
         # Go to the entertainment section labeled “मनोरञ्जन”.
         page.goto("https://ekantipur.com/entertainment", wait_until="domcontentloaded")
-        page.wait_for_load_state("networkidle")
+        page.wait_for_load_state("load")
 
         # Wait until at least one news article card is visible.
         # Using semantic HTML (`article`) is typically more stable than class-based selectors.

@@ -1,8 +1,15 @@
 {
-    "entertainment_news": [],
-    "cartoon_of_the_day": {
+  "entertainment_news": [
+    {
       "title": null,
       "image_url": null,
+      "category": "मनोरञ्जन",
       "author": null
     }
+  ],
+  "cartoon_of_the_day": {
+    "title": null,
+    "image_url": null,
+    "author": null
   }
+}
