@@ -1,4 +1,4 @@
-from urllib.parse import urljoin
+from urllib.parse import parse_qs, unquote, urljoin, urlparse
 
 from playwright.sync_api import sync_playwright
 
@@ -21,6 +21,26 @@ def _resolve_to_absolute(base_url: str, maybe_url: str | None) -> str | None:
         return "https:" + u
     return urljoin(base_url, u)
 
+
+def _unwrap_thumb_php(maybe_thumb_url: str | None) -> str | None:
+    """
+    If the URL looks like a thumb.php?src=... wrapper, return the direct `src` URL.
+    Otherwise, return the original URL unchanged.
+    """
+    if not maybe_thumb_url:
+        return None
+    u = maybe_thumb_url.strip()
+    parsed = urlparse(u)
+    if not parsed.path.endswith("/thumb.php"):
+        return u
+    qs = parse_qs(parsed.query)
+    src_vals = qs.get("src") or []
+    if not src_vals:
+        return u
+    # src is typically URL-encoded already.
+    return unquote(src_vals[0]) or u
+
+
 def main():
     # Start the Playwright context manager
     with sync_playwright() as p:
@@ -38,22 +58,70 @@ def main():
 
         # Wait for the network to be mostly idle to ensure the page has loaded
         # Adjust timeout or wait strategy later as needed for scraping
+        page.wait_for_load_state("load")
+        page.wait_for_selector("body")
+
+        # --- Cartoon of the Day (homepage: व्यंग्यचित्र / कार्टुन) ---
+        # Navigate to the dedicated cartoon page, which reliably represents
+        # the current "Cartoon of the Day".
+        page.goto("https://ekantipur.com/cartoon", wait_until="domcontentloaded")
         page.wait_for_load_state("networkidle")
 
-        # Click on the Entertainment section labeled “मनोरञ्जन”.
-        # We use a role-based locator for resilience (it will match a visible link named exactly that).
-        entertainment_link = page.get_by_role("link", name="मनोरञ्जन").first
+        # Wait for the main cartoon content to be visible (best-effort; don't crash if layout changes).
+        hero_img = page.locator("main img, article img").first
+        if hero_img.count() > 0:
+            hero_img.wait_for(state="visible", timeout=30_000)
 
-        # Clicking may trigger either a full navigation or a client-side route change.
-        # Wait for a URL that looks like the entertainment section, then wait for articles to appear.
-        with page.expect_url("**/entertainment**", timeout=30_000):
-            entertainment_link.click()
+        # Title (cartoon headline) - return None if missing
+        cartoon_title: str | None = None
+        title_loc = page.locator("main h1, article h1").first
+        if title_loc.count() > 0:
+            t = title_loc.inner_text().strip()
+            cartoon_title = t or None
 
-        # Ensure the entertainment page finishes loading.
-        page.wait_for_load_state("domcontentloaded")
+        # Image URL (handle relative / lazy / srcset)
+        cartoon_img = page.locator("main img, article img").first
+        cartoon_src = None
+        if cartoon_img.count() > 0:
+            cartoon_src = cartoon_img.get_attribute("src")
+        if not cartoon_src and cartoon_img.count() > 0:
+            cartoon_src = (
+                cartoon_img.get_attribute("data-src")
+                or cartoon_img.get_attribute("data-original")
+                or cartoon_img.get_attribute("data-lazy")
+                or cartoon_img.get_attribute("data-srcset")
+            )
+        if not cartoon_src and cartoon_img.count() > 0:
+            cartoon_src = _first_url_from_srcset(cartoon_img.get_attribute("srcset"))
+
+        cartoon_image_url = _resolve_to_absolute(page.url, cartoon_src)
+        # Ensure we return a direct/original image URL even if the site wraps it with thumb.php?src=...
+        cartoon_image_url = _unwrap_thumb_php(cartoon_image_url)
+
+        # Cartoonist name (if present; otherwise None)
+        cartoonist: str | None = None
+        cartoon_author_loc = page.locator('a[href^="/author/"], a[href^="https://ekantipur.com/author/"]').first
+        if cartoon_author_loc.count() > 0:
+            text = cartoon_author_loc.inner_text().strip()
+            cartoonist = text or None
+
+        cartoon = {
+            "title": cartoon_title,
+            "image_url": cartoon_image_url,
+            "cartoonist": cartoonist,
+        }
+
+        print("\nCartoon of the Day:")
+        print(f"  title: {cartoon['title']}")
+        print(f"  image_url: {cartoon['image_url']}")
+        print(f"  cartoonist: {cartoon['cartoonist']}")
+
+        # --- Entertainment section (top 5 articles) ---
+        # Go to the entertainment section labeled “मनोरञ्जन”.
+        page.goto("https://ekantipur.com/entertainment", wait_until="domcontentloaded")
         page.wait_for_load_state("networkidle")
 
-        # Wait until at least one news article card is visible (no data extraction yet).
+        # Wait until at least one news article card is visible.
         # Using semantic HTML (`article`) is typically more stable than class-based selectors.
         page.locator("main article").first.wait_for(state="visible", timeout=30_000)
 
