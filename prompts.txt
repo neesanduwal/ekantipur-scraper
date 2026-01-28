@@ -1,0 +1,29 @@
+1) Create a minimal Playwright Python script using sync_playwright that opens Chromium (headless=False), navigates to https://ekantipur.com, waits for the page to load, and then closes the browser. Add clear comments but do not scrape anything yet.
+
+2) Update the Playwright script to click on the entertainment section labeled “मनोरञ्जन” on ekantipur.com and wait properly for the entertainment news articles to load. Do not extract any data yet.
+
+3) Based on ekantipur.com’s entertainment section, help identify a stable CSS selector that represents a single news article card. Prefer semantic HTML or data attributes and avoid fragile XPaths.
+
+4) (Yes) Adjust the Playwright wait to use the stable article-card selector.
+
+5) Using Playwright in Python, extract only the titles of the top 5 entertainment news articles from the entertainment section and print them to the console. Do not extract images, categories, or authors yet.
+
+6) Extend the existing Playwright code to also extract the thumbnail image URL for each of the top 5 entertainment articles. Ensure the image URL is a full absolute URL even if the src attribute is relative or lazy-loaded.
+
+7) Update the extraction logic to include the category/section label and the author name for each entertainment article. If the author element is not found, return null instead of throwing an error.
+
+8) Help structure the extracted entertainment news data into a Python list of dictionaries with the keys: title, image_url, category, and author. Do not write to a JSON file yet.
+
+9) Help identify a reliable selector for the “Cartoon of the Day” (व्यंग्यिचत्र) section on ekantipur.com and explain how to extract its title, image URL, and author using Playwright.
+
+11) Using Playwright Python, extract the Cartoon of the Day’s title, direct image URL, and cartoonist name from ekantipur.com. Handle missing elements safely.
+
+12) Show how to write the extracted entertainment news list and cartoon of the day data into a valid output.json file using Python. Ensure ensure_ascii=False so Nepali text is preserved and match the required JSON structure exactly.
+
+13) Nono dont make changes in scraper.py i have made a seprate json file named output makes changes in that fiole.
+
+14) Review the Playwright scraping script and suggest improvements for readability, comments, waiting strategies, and error handling without changing the overall logic.
+
+15) Run this project.
+
+16) Now in prompt.txt list all the prompts i have used to create this project.
