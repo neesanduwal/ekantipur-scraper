@@ -1,15 +1,39 @@
 {
-  "entertainment_news": [
-    {
-      "title": null,
-      "image_url": null,
-      "category": "मनोरञ्जन",
-      "author": null
-    }
-  ],
-  "cartoon_of_the_day": {
+  "cartoon": {
     "title": null,
-    "image_url": null,
-    "author": null
-  }
+    "image_url": "https://assets-cdn.ekantipur.com/uploads/source/news/kantipur/2022/third-party/gajab-chha-ba-821015-2912026031933-1000x0.jpg",
+    "cartoonist": null
+  },
+  "entertainment_articles": [
+    {
+      "title": "बर्लिनालेको अन्तर्राष्ट्रिय जुरीमा मीन भाम",
+      "image_url": "https://assets-cdn-api.ekantipur.com/thumb.php?src=https://assets-cdn.ekantipur.com/uploads/source/news/kantipur/2025/miscellaneous/min-bham-21112025101039-1000x0.jpg&w=301&h=0",
+      "category": "मनोरञ्जन",
+      "author": "कान्तिपुर संवाददाता"
+    },
+    {
+      "title": "‘बुकी’को गीतमा देबेन्द्र र रोशनी",
+      "image_url": "https://assets-cdn-api.ekantipur.com/thumb.php?src=https://assets-cdn.ekantipur.com/uploads/source/news/kantipur/2026/third-party/screenshot-2026-01-27-152452-2812026123100-1000x0.png&w=301&h=0",
+      "category": "मनोरञ्जन",
+      "author": "कान्तिपुर संवाददाता"
+    },
+    {
+      "title": "शान्तिराम राईको एकल सांगीतिक कार्यक्रम सम्पन्न",
+      "image_url": "https://assets-cdn-api.ekantipur.com/thumb.php?src=https://assets-cdn.ekantipur.com/uploads/source/news/kantipur/2026/third-party/f9392357-ed41-4e96-ac09-c0a71618625f-2712026100249-1000x0.jpg&w=301&h=0",
+      "category": "मनोरञ्जन",
+      "author": "कान्तिपुर संवाददाता"
+    },
+    {
+      "title": "‘आ बाट आमा’को सेन्सर पास",
+      "image_url": "https://assets-cdn-api.ekantipur.com/thumb.php?src=https://assets-cdn.ekantipur.com/uploads/source/news/kantipur/2026/third-party/aaammmamaa-2712026094445-1000x0.png&w=301&h=0",
+      "category": "मनोरञ्जन",
+      "author": "कान्तिपुर संवाददाता"
+    },
+    {
+      "title": "जिके पोखरेलको गीत ‘इन्दिरा’ सार्वजनिक",
+      "image_url": "https://assets-cdn-api.ekantipur.com/thumb.php?src=https://assets-cdn.ekantipur.com/uploads/source/news/kantipur/2026/entertainment/82cc2641-ea7a-444a-8d4e-7a6041d8f2ae-1-2712026052728-1000x0.jpg&w=301&h=0",
+      "category": "मनोरञ्जन",
+      "author": "कान्तिपुर संवाददाता"
+    }
+  ]
 }

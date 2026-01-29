@@ -1,4 +1,5 @@
 from urllib.parse import parse_qs, unquote, urljoin, urlparse
+import json
 
 from playwright.sync_api import sync_playwright
 
@@ -191,13 +192,23 @@ def main():
                 }
             )
 
-        # Print the structured list (no file output yet).
-        print("\nTop 5 Entertainment (structured):")
-        for idx, article in enumerate(articles, start=1):
-            print(f"{idx}. title: {article['title']}")
-            print(f"   image_url: {article['image_url']}")
-            print(f"   category: {article['category']}")
-            print(f"   author: {article['author']}")
+        # --- Write all extracted data to output.json ---
+        data = {
+            "cartoon": cartoon,
+            "entertainment_articles": articles,
+        }
+
+        output_path = "output.json"
+        with open(output_path, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+
+        # Show the contents of output.json after extraction.
+        print(f"\nWrote extracted data to {output_path}. Full contents:")
+        with open(output_path, "r", encoding="utf-8") as f:
+            content = f.read()
+            # Safely print even if console encoding can't handle some characters.
+            safe_content = content.encode("cp1252", errors="replace").decode("cp1252")
+            print(safe_content)
 
         # Close the browser context and the browser
         context.close()
